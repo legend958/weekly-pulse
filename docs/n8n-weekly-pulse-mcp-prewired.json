@@ -1,0 +1,110 @@
+{
+  "name": "Weekly Product Pulse - MCP publish",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Weekly Product Pulse — MCP publish\n\n**Already wired for you:**\n- Path = `weekly-pulse` (Production URL: `/mcp/weekly-pulse`)\n- `append_to_note` -> your Google Doc, using credential **Google Docs account**\n- `create_email_draft` -> Gmail draft, using credential **Gmail account**\n\n**One thing left — the trigger's own auth:**\n1. Click **MCP Server Trigger**.\n2. **Authentication** is already *Bearer Auth* — open the **Credential** dropdown and choose **Create new**.\n3. Paste your `PULSE_MCP_TOKEN` into **Bearer Token**, name it `Weekly Pulse MCP (Bearer)`, **Save**.\n4. **Publish** the workflow (top-right button).\n5. Copy the **Production URL** and put it in `.env.local` as `PULSE_MCP_ENDPOINT`.\n\n**Do not rename** the tool nodes — the pipeline calls `append_to_note` and `create_email_draft`.",
+        "height": 520,
+        "width": 500,
+        "color": 4
+      },
+      "id": "sticky-setup-0001",
+      "name": "Setup notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-840, 120]
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "weekly-pulse",
+        "instructions": "Weekly Product Pulse publisher. Use append_to_note to append the weekly packet (pulse + fee explainer) to the internal notes document. Use create_email_draft to create a Gmail draft containing the same packet for a human to review; never send."
+      },
+      "id": "mcp-trigger-weekly-pulse",
+      "name": "MCP Server Trigger",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [560, 320],
+      "webhookId": "weekly-pulse-mcp"
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k/edit?usp=sharing",
+        "simple": true,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "text",
+              "action": "insert",
+              "insertSegment": "body",
+              "locationChoice": "endOfSegmentLocation",
+              "index": 0,
+              "text": "={{ $fromAI('title', 'Title line for this weekly entry', 'string') + '\\n\\n' + $fromAI('content', 'Markdown packet: the weekly pulse followed by the fee explainer', 'string') + '\\n\\n' }}"
+            }
+          ]
+        }
+      },
+      "id": "gdocs-append-note",
+      "name": "append_to_note",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [160, 160],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "77YPwrdD4clfMUnS",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $fromAI('subject', 'Email subject line for the weekly pulse', 'string') }}",
+        "emailType": "text",
+        "message": "={{ $fromAI('body', 'Markdown packet: the weekly pulse followed by the fee explainer', 'string') }}",
+        "options": {}
+      },
+      "id": "gmail-create-draft",
+      "name": "create_email_draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [160, 480],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wPxafhsftdettiAZ",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "ai_tool": [
+        [
+          {
+            "node": "append_to_note",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "create_email_draft",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,60 @@
+{
+  "seed": 20261016,
+  "rows": 700,
+  "date_range": [
+    "2026-07-24",
+    "2026-10-16"
+  ],
+  "rating_mix": {
+    "1": 64,
+    "2": 143,
+    "3": 301,
+    "4": 139,
+    "5": 53
+  },
+  "avg_rating": 2.96,
+  "distinct_texts": 697,
+  "dev_replies": 501,
+  "titles_populated": 678,
+  "themes": {
+    "fees": {
+      "count": 150,
+      "avg_rating": 2.73
+    },
+    "performance": {
+      "count": 160,
+      "avg_rating": 2.62
+    },
+    "kyc": {
+      "count": 120,
+      "avg_rating": 2.56
+    },
+    "withdrawal": {
+      "count": 115,
+      "avg_rating": 2.63
+    },
+    "uiux": {
+      "count": 115,
+      "avg_rating": 3.89
+    },
+    "praise": {
+      "count": 40,
+      "avg_rating": 4.67
+    }
+  },
+  "weekly_fee_mentions": {
+    "2026-W30": 5,
+    "2026-W31": 9,
+    "2026-W32": 4,
+    "2026-W33": 7,
+    "2026-W34": 8,
+    "2026-W35": 10,
+    "2026-W36": 15,
+    "2026-W37": 18,
+    "2026-W38": 18,
+    "2026-W39": 18,
+    "2026-W40": 19,
+    "2026-W41": 17,
+    "2026-W42": 2
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "name": "Milestone 5 - MCP Review Intelligence & Approval Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mcp-review-pulse",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        112
+      ],
+      "id": "bfe19a4f-f22a-448d-9e12-de61ea90eea7",
+      "name": "Webhook",
+      "webhookId": "mcp-review-pulse"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        112
+      ],
+      "id": "0cb3274d-b340-4936-99d8-54f3a2259702",
+      "name": "Wait for Approval (MCP Gate)",
+      "webhookId": "db689b89-f1bd-471b-ad42-a67a5a483d50"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k/edit?usp=sharing",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "721a1c37-72fb-4a79-9951-4d7eec863a1a",
+      "name": "Google Docs (Log Entry)",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "77YPwrdD4clfMUnS",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ 'Weekly Product Pulse + Customer Clarification — ' + $json.date }}",
+        "message": "={{ 'Hi Support Team,\\n\\nHere is our latest weekly product pulse and the reusable support snippet for the recurring fee confusion identified this week.\\n\\n' + $json.weekly_pulse + '\\n\\n---\\nREUSABLE SUPPORT SNIPPET (Fee Explainer):\\n' + $json.explanation_bullets + '\\n\\nLast checked: ' + $json.date + '\\nOfficial References: ' + $json.source_links }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        224
+      ],
+      "id": "f26909ac-ec82-4fad-86b5-40da74dc288b",
+      "name": "Gmail (Create Draft)",
+      "webhookId": "7f5d1579-ad7a-4b6d-a431-a4cff1afc19b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wPxafhsftdettiAZ",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval (MCP Gate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval (MCP Gate)": {
+      "main": [
+        [
+          {
+            "node": "Google Docs (Log Entry)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail (Create Draft)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "31e56ac0-fe1c-43cb-b499-39782b302067",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6cf4316205f821e9eb1b5caa50d6692dea619815ba16e00deb870e304363192a"
+  },
+  "nodeGroups": [],
+  "id": "q3fe1DAA8gCEMwF3",
+  "tags": []
+}

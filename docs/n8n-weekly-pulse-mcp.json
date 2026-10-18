@@ -1,0 +1,98 @@
+{
+  "name": "Weekly Product Pulse - MCP publish",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Weekly Product Pulse — MCP publish\n\nExposes two tools to the pipeline's Stage G client.\n\n**Setup**\n1. Open the **MCP Server Trigger** and set **Authentication** to *Bearer Auth*; create an `httpBearerAuth` credential whose token matches `PULSE_MCP_TOKEN`.\n2. Copy the **Production URL** into `PULSE_MCP_ENDPOINT` (transport = streamable HTTP).\n3. In **append_to_note**, replace `REPLACE_WITH_YOUR_GOOGLE_DOC_ID` with your notes doc ID/URL.\n4. Attach Google credentials to **append_to_note** and Gmail credentials to **create_email_draft**.\n5. Publish (activate) the workflow.\n\n**Do not rename the tool nodes** — the pipeline calls `append_to_note` and `create_email_draft`.",
+        "height": 460,
+        "width": 480,
+        "color": 4
+      },
+      "id": "sticky-setup-0001",
+      "name": "Setup notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-820, 120]
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "weekly-pulse",
+        "instructions": "Weekly Product Pulse publisher. Use append_to_note to append the weekly packet (pulse + fee explainer) to the internal notes document. Use create_email_draft to create a Gmail draft containing the same packet for a human to review; never send."
+      },
+      "id": "mcp-trigger-weekly-pulse",
+      "name": "MCP Server Trigger",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [560, 300],
+      "webhookId": "weekly-pulse-mcp"
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "operation": "update",
+        "documentURL": "REPLACE_WITH_YOUR_GOOGLE_DOC_ID",
+        "simple": true,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "text",
+              "action": "insert",
+              "insertSegment": "body",
+              "locationChoice": "endOfSegmentLocation",
+              "index": 0,
+              "text": "={{ $fromAI('title', 'Title line for this weekly entry', 'string') + '\\n\\n' + $fromAI('content', 'Markdown packet: the weekly pulse followed by the fee explainer', 'string') + '\\n\\n' }}"
+            }
+          ]
+        }
+      },
+      "id": "gdocs-append-note",
+      "name": "append_to_note",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [160, 140]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $fromAI('subject', 'Email subject line for the weekly pulse', 'string') }}",
+        "emailType": "text",
+        "message": "={{ $fromAI('body', 'Markdown packet: the weekly pulse followed by the fee explainer', 'string') }}",
+        "options": {}
+      },
+      "id": "gmail-create-draft",
+      "name": "create_email_draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [160, 460]
+    }
+  ],
+  "connections": {
+    "MCP Server Trigger": {
+      "ai_tool": [
+        [
+          {
+            "node": "append_to_note",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "create_email_draft",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,232 @@
+{
+  "name": "Milestone 5 - MCP Review Intelligence & Approval Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mcp-review-pulse",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        112
+      ],
+      "id": "bfe19a4f-f22a-448d-9e12-de61ea90eea7",
+      "name": "Webhook",
+      "webhookId": "mcp-review-pulse"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        112
+      ],
+      "id": "0cb3274d-b340-4936-99d8-54f3a2259702",
+      "name": "Wait for Approval (MCP Gate)",
+      "webhookId": "db689b89-f1bd-471b-ad42-a67a5a483d50"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k/edit?usp=sharing",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "721a1c37-72fb-4a79-9951-4d7eec863a1a",
+      "name": "Google Docs (Log Entry)",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "77YPwrdD4clfMUnS",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ 'Weekly Product Pulse + Customer Clarification — ' + $json.date }}",
+        "message": "={{ 'Hi Support Team,\\n\\nHere is our latest weekly product pulse and the reusable support snippet for the recurring fee confusion identified this week.\\n\\n' + $json.weekly_pulse + '\\n\\n---\\nREUSABLE SUPPORT SNIPPET (Fee Explainer):\\n' + $json.explanation_bullets + '\\n\\nLast checked: ' + $json.date + '\\nOfficial References: ' + $json.source_links }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        224
+      ],
+      "id": "f26909ac-ec82-4fad-86b5-40da74dc288b",
+      "name": "Gmail (Create Draft)",
+      "webhookId": "7f5d1579-ad7a-4b6d-a431-a4cff1afc19b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wPxafhsftdettiAZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## MCP trigger (added for Phase 11)\n\nThis workflow now exposes TWO MCP tools while keeping the original **Webhook -> Wait for Approval -> Google Docs / Gmail** flow untouched.\n\n**Setup**\n1. Open **MCP Server Trigger**: Authentication = *Bearer Auth*; attach an `httpBearerAuth` credential whose token matches `PULSE_MCP_TOKEN`.\n2. Copy the **Production URL** (`https://<your-n8n>/mcp/weekly-pulse`) into `PULSE_MCP_ENDPOINT` (transport = http).\n3. Credentials on `append_to_note` (Google Docs) and `create_email_draft` (Gmail) are reused from your existing nodes - re-attach them if you import this JSON into a different n8n instance.\n4. **Activate** the workflow, then preflight from the repo root:\n   `python scripts/check_n8n_endpoint.py`\n\n**Do not rename the tool nodes** - the pipeline calls `append_to_note` and `create_email_draft`.\nPublishing is gated by the pipeline approval: Stage G only calls these tools after `--decision approve`.",
+        "height": 560,
+        "width": 520,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        448
+      ],
+      "id": "e9a14b38-6c52-4d0f-8a17-2f6b5e9c3048",
+      "name": "Setup notes (MCP)"
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "weekly-pulse",
+        "instructions": "Weekly Product Pulse publisher. Use append_to_note to append the weekly packet (pulse + fee explainer) to the internal notes document. Use create_email_draft to create a Gmail draft containing the same packet for a human to review; never send."
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        480
+      ],
+      "id": "7f3a1c9e-2b64-4d81-9f0e-5a6c3d8b1e42",
+      "name": "MCP Server Trigger",
+      "webhookId": "weekly-pulse-mcp"
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k/edit?usp=sharing",
+        "simple": true,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "text",
+              "action": "insert",
+              "insertSegment": "body",
+              "locationChoice": "endOfSegmentLocation",
+              "index": 0,
+              "text": "={{ $fromAI('title', 'Title line for this weekly entry', 'string') + '\\n\\n' + $fromAI('content', 'Markdown packet: the weekly pulse followed by the fee explainer', 'string') + '\\n\\n' }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        240,
+        416
+      ],
+      "id": "c2d91e07-4f58-4a6b-93c1-8e2a7f5d0b31",
+      "name": "append_to_note",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "77YPwrdD4clfMUnS",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "={{ $fromAI('subject', 'Email subject line for the weekly pulse', 'string') }}",
+        "emailType": "text",
+        "message": "={{ $fromAI('body', 'Markdown packet: the weekly pulse followed by the fee explainer', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        560
+      ],
+      "id": "5b8c6f20-9d13-4a7e-b4f6-1c9e0a3d7f25",
+      "name": "create_email_draft",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "wPxafhsftdettiAZ",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval (MCP Gate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval (MCP Gate)": {
+      "main": [
+        [
+          {
+            "node": "Google Docs (Log Entry)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail (Create Draft)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Server Trigger": {
+      "ai_tool": [
+        [
+          {
+            "node": "append_to_note",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "create_email_draft",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "tags": []
+}

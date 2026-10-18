@@ -1,0 +1,44 @@
+Build an AI workflow for the same product you selected in Milestone 1 that transforms raw customer feedback into a structured internal update and a ready-to-use customer communication.
+
+Your system should:
+
+Analyze recent user reviews to identify key product issues and themes
+
+Detect a frequently misunderstood fee/charge from those insights
+
+Generate:
+
+A weekly internal product pulse
+A standardized explanation for that specific fee
+Finally, use MCP (with approval gating) to log and share this output across internal tools.
+
+The goal is to simulate a real Product + Support workflow where:
+
+Product teams track user sentiment
+Support teams proactively create clear explanations for recurring confusion
+What You Must Build
+Step 1 — Review Intelligence Layer
+Input:
+
+1 public reviews CSV (last 8–12 weeks)
+Your system must:
+
+Cluster reviews into max 5 themes
+Identify top 3 themes
+Extract 3 real user quotes
+Highlight 1 recurring confusion/pain point related to a fee/charge
+Step 2 — Weekly Product Pulse (Internal Output)
+Using the insights above, generate a ≤250-word structured weekly note:
+
+Summary of top themes
+Supporting user quotes
+Key observation (what’s going wrong / trending)
+3 action ideas for the product team
+Step 3 — Fee Explainer (Derived from Insights)
+Using the identified confusion from Step 1, generate a structured explanation:
+
+≤6 bullet points explaining the fee clearly
+Written in a neutral, facts-only tone
+Include 2 official source links
+Add: “Last checked: ”
+Important: This is not a random scenario. It must directly connect to what users are confused about in reviews.
