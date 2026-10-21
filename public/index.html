@@ -3,24 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Product Pulse</title>
+    <title>Weekly Product Pulse - Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown.min.css">
     <style>
-        body { box-sizing: border-box; min-width: 200px; max-width: 980px; margin: 0 auto; padding: 45px; }
+        body { box-sizing: border-box; min-width: 200px; max-width: 1100px; margin: 0 auto; padding: 45px; }
         @media (max-width: 767px) { body { padding: 15px; } }
+        .header { border-bottom: 2px solid #e1e4e8; padding-bottom: 20px; margin-bottom: 30px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f6f8fa; padding: 15px; border-radius: 6px; border: 1px solid #e1e4e8; }
+        .stat-card h3 { margin: 0 0 5px 0; font-size: 14px; color: #586069; }
+        .stat-card p { margin: 0; font-size: 24px; font-weight: 600; }
+        .section { margin: 30px 0; }
+        .theme-item { background: #f6f8fa; padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #0366d6; }
+        .publish-item { padding: 10px; margin: 5px 0; background: #dcffe4; border-radius: 6px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; background: #28a745; color: white; }
+        pre { background: #f6f8fa; padding: 16px; overflow-x: auto; }
     </style>
 </head>
 <body class="markdown-body">
-    <div id="content">Loading...</div>
+    <div class="header">
+        <h1>Weekly Product Pulse Dashboard</h1>
+        <p id="run-info">Loading...</p>
+    </div>
+    
+    <div class="section">
+        <h2>Summary</h2>
+        <div class="stats" id="stats"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Weekly Pulse</h2>
+        <div id="pulse"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Top Themes</h2>
+        <div id="themes"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Fee Explainer</h2>
+        <div id="fee"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Publish Status</h2>
+        <div id="publish"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Approval</h2>
+        <div id="approval"></div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        fetch('index.md')
-            .then(response => response.text())
-            .then(text => {
-                document.getElementById('content').innerHTML = marked.parse(text);
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => {
+                // Run info
+                document.getElementById('run-info').innerHTML = 
+                    `<strong>Run ID:</strong> ${data.run_id} | <strong>Backend:</strong> ${data.run_meta.backend}`;
+                
+                // Stats
+                const stats = document.getElementById('stats');
+                stats.innerHTML = `
+                    <div class="stat-card"><h3>Reviews Analyzed</h3><p>${data.run_meta.quality.rows}</p></div>
+                    <div class="stat-card"><h3>Themes</h3><p>${data.themes.themes.length}</p></div>
+                    <div class="stat-card"><h3>Quotes</h3><p>${data.insights.quotes.length}</p></div>
+                    <div class="stat-card"><h3>Fee Confusion</h3><p>${data.insights.fee_confusion.detected ? 'Detected' : 'Not Detected'}</p></div>
+                `;
+                
+                // Pulse
+                document.getElementById('pulse').innerHTML = marked.parse(data.pulse);
+                
+                // Themes
+                const themesDiv = document.getElementById('themes');
+                data.themes.themes.slice(0, 5).forEach(theme => {
+                    themesDiv.innerHTML += `
+                        <div class="theme-item">
+                            <strong>${theme.name}</strong> (${theme.count} reviews, avg rating ${theme.avg_rating.toFixed(2)})<br>
+                            <small>${theme.summary}</small>
+                        </div>
+                    `;
+                });
+                
+                // Fee explainer
+                document.getElementById('fee').innerHTML = marked.parse(data.fee_explainer);
+                
+                // Publish
+                const publishDiv = document.getElementById('publish');
+                if (data.publish_log) {
+                    data.publish_log.forEach(pub => {
+                        publishDiv.innerHTML += `
+                            <div class="publish-item">
+                                <span class="badge">✓ Published</span> <strong>${pub.outcome}</strong> via ${pub.tool}<br>
+                                <a href="${pub.destination}" target="_blank">${pub.destination}</a><br>
+                                <small>${pub.published_at}</small>
+                            </div>
+                        `;
+                    });
+                }
+                
+                // Approval
+                document.getElementById('approval').innerHTML = `
+                    <p><span class="badge">✓ ${data.approval.state}</span> by ${data.approval.reviewer} at ${data.approval.decided_at}</p>
+                `;
             })
             .catch(err => {
-                document.getElementById('content').innerHTML = '<p>Error loading content: ' + err + '</p>';
+                document.body.innerHTML = '<p>Error loading dashboard: ' + err + '</p>';
             });
     </script>
 </body>
