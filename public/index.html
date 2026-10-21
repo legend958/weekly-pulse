@@ -19,7 +19,7 @@
         .metric-value { font-size: 1.8rem; font-weight: 600; color: #000; }
         .themes-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
         .themes-table th { background: #f8f9fa; padding: 0.75rem; text-align: left; font-weight: 600; border: 1px solid #dee2e6; }
-        .themes-table td { padding: 0.75rem; border: px solid #dee2e6; }
+        .themes-table td { padding: 0.75rem; border: 1px solid #dee2e6; }
         .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 4px; }
         .quotes { margin: 1.5rem 0; }
         .quote { padding: 1rem 0; border-bottom: 1px solid #f0f0f0; }
@@ -35,11 +35,11 @@
         .sources a { color: #0066cc; text-decoration: none; }
         .sources a:hover { text-decoration: underline; }
         .last-checked { font-size: 0.9rem; color: #666; margin: 0.75rem 0; }
-        .mcp-section { background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-top: 2.5rem; border: 2px solid #4caf50; }
-        .mcp-item { margin: 0.75rem 0; padding: 0.75rem; background: white; border-radius: 4px; }
-        .mcp-item strong { color: #2e7d32; }
-        .mcp-item a { color: #0066cc; text-decoration: none; font-weight: 500; }
-        .approval-badge { display: inline-block; padding: 0.25rem 0.75rem; background: #4caf50; color: white; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
+        .mcp-section { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 2.5rem; border: 1px solid #dee2e6; }
+        .mcp-icons { display: flex; gap: 1rem; margin: 1rem 0; align-items: center; }
+        .mcp-icon { width: 40px; height: 40px; cursor: pointer; transition: transform 0.2s; }
+        .mcp-icon:hover { transform: scale(1.1); }
+        .approval-badge { display: inline-block; padding: 0.25rem 0.75rem; background: #28a745; color: white; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -86,8 +86,8 @@
         
         <section class="mcp-section">
             <h2 style="margin-top: 0;">Logged & Shared via MCP (with approval gating)</h2>
-            <p style="margin-bottom: 1rem; color: #2e7d32;"><strong>Results logged/shared across internal tools via MCP with approval gating</strong></p>
-            <div id="mcp-items"></div>
+            <p style="margin-bottom: 1rem; color: #333;">Results logged/shared across internal tools</p>
+            <div class="mcp-icons" id="mcp-icons"></div>
             <div style="margin-top: 1rem;">
                 <span class="approval-badge" id="approval-badge"></span>
             </div>
@@ -140,11 +140,14 @@
                 const m = data.fee_explainer.match(/Last checked: (.+)/);
                 if (m) document.getElementById('last-checked').textContent = m[1];
                 
-                const mcpDiv = document.getElementById('mcp-items');
+                const mcpIcons = document.getElementById('mcp-icons');
                 if (data.publish_log) {
                     data.publish_log.forEach(p => {
-                        const label = p.outcome === 'append_note' ? 'Google Docs (append_to_note)' : 'Gmail Draft (create_email_draft)';
-                        mcpDiv.innerHTML += `<div class="mcp-item"><strong>${label}</strong><br><a href="${p.destination}" target="_blank">${p.destination}</a><br><small style="color:#666;">Published: ${p.published_at}</small></div>`;
+                        if (p.outcome === 'append_note') {
+                            mcpIcons.innerHTML += `<a href="${p.destination}" target="_blank" title="Google Docs"><img src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" class="mcp-icon" alt="Google Docs"></a>`;
+                        } else if (p.outcome === 'create_email_draft') {
+                            mcpIcons.innerHTML += `<a href="${p.destination}" target="_blank" title="Gmail Draft"><img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" class="mcp-icon" alt="Gmail"></a>`;
+                        }
                     });
                 }
                 document.getElementById('approval-badge').textContent = `✓ Approved by ${data.approval.reviewer} at ${data.approval.decided_at}`;
