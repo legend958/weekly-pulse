@@ -6,174 +6,142 @@
     <title>Groww review pulse</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; background: #f9f9f9; color: #262730; line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #0e1117; }
-        .caption { color: #6c757d; margin-bottom: 2rem; font-size: 0.9rem; }
-        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-        .metric { background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e0e0e0; }
-        .metric-label { color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .metric-value { font-size: 2rem; font-weight: 600; color: #0e1117; }
-        h2 { font-size: 1.5rem; font-weight: 600; margin: 2rem 0 1rem 0; color: #0e1117; }
-        .table-container { background: white; border-radius: 8px; border: 1px solid #e0e0e0; overflow-x: auto; margin-bottom: 1rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f8f9fa; padding: 0.75rem; text-align: left; font-weight: 600; border-bottom: 2px solid #dee2e6; font-size: 0.9rem; }
-        td { padding: 0.75rem; border-bottom: 1px solid #dee2e6; }
-        tr:last-child td { border-bottom: none; }
-        .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; }
-        .quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-        .quote-card { background: white; padding: 1.25rem; border-radius: 8px; border: 1px solid #e0e0e0; }
-        .quote-theme { font-weight: 600; color: #0e1117; margin-bottom: 0.5rem; }
-        .quote-text { font-style: italic; color: #262730; margin-bottom: 0.75rem; }
-        .quote-meta { font-size: 0.8rem; color: #6c757d; }
-        .pulse { background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 1.5rem; white-space: pre-wrap; line-height: 1.8; }
-        .fee-explainer { background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e0e0e0; }
-        .fee-explainer ul { list-style: none; }
-        .fee-explainer li { padding: 0.5rem 0; }
-        .fee-explainer li:before { content: "• "; color: #0066cc; font-weight: bold; }
-        .fee-links { margin-top: 1rem; }
-        .fee-links a { color: #0066cc; text-decoration: none; }
-        .fee-links a:hover { text-decoration: underline; }
-        .mcp-status { background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e0e0e0; margin-top: 2rem; }
-        .mcp-item { padding: 0.75rem; margin: 0.5rem 0; background: #d4edda; border-left: 3px solid #28a745; border-radius: 4px; }
-        .mcp-label { font-weight: 600; color: #155724; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; background: #ffffff; color: #1a1a1a; line-height: 1.7; }
+        .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+        header { margin-bottom: 2.5rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 1.5rem; }
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: #000; }
+        .subtitle { color: #666; font-size: 0.95rem; }
+        h2 { font-size: 1.4rem; font-weight: 600; margin: 2.5rem 0 1rem 0; color: #000; }
+        .section { margin-bottom: 2rem; }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+        .metric { padding: 1rem; background: #f8f9fa; border-radius: 6px; }
+        .metric-label { font-size: 0.85rem; color: #666; margin-bottom: 0.25rem; }
+        .metric-value { font-size: 1.8rem; font-weight: 600; color: #000; }
+        .themes-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+        .themes-table th { background: #f8f9fa; padding: 0.75rem; text-align: left; font-weight: 600; border: 1px solid #dee2e6; }
+        .themes-table td { padding: 0.75rem; border: 1px solid #dee2e6; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 4px; }
+        .quotes { margin: 1.5rem 0; }
+        .quote { padding: 1rem 0; border-bottom: 1px solid #f0f0f0; }
+        .quote:last-child { border-bottom: none; }
+        .quote-theme { font-weight: 600; margin-bottom: 0.5rem; color: #000; }
+        .quote-text { font-style: italic; color: #333; margin-bottom: 0.5rem; }
+        .quote-meta { font-size: 0.85rem; color: #666; }
+        .pulse-text { white-space: pre-wrap; line-height: 1.8; color: #333; }
+        .fee-list { list-style: none; margin: 1rem 0; }
+        .fee-list li { padding: 0.6rem 0; padding-left: 1.25rem; position: relative; }
+        .fee-list li:before { content: "-"; position: absolute; left: 0.5rem; }
+        .sources { margin-top: 1rem; font-size: 0.9rem; }
+        .sources a { color: #0066cc; text-decoration: none; }
+        .sources a:hover { text-decoration: underline; }
+        .last-checked { font-size: 0.9rem; color: #666; margin: 0.75rem 0; }
+        .mcp-section { background: #f8f9fa; padding: 1.25rem; border-radius: 6px; margin-top: 2rem; }
+        .mcp-item { margin: 0.5rem 0; }
+        .mcp-item strong { color: #155724; }
+        .mcp-item a { color: #0066cc; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Groww review pulse</h1>
-        <p class="caption" id="caption">Loading...</p>
+        <header>
+            <h1>Groww review pulse</h1>
+            <p class="subtitle" id="subtitle"></p>
+        </header>
         
         <div class="metrics" id="metrics"></div>
         
-        <h2>Five themes, ranked by review count</h2>
-        <div class="table-container">
-            <table id="themes-table">
+        <section class="section">
+            <h2>Five themes, ranked by review count</h2>
+            <table class="themes-table" id="themes-table">
                 <thead>
-                    <tr>
-                        <th>name</th>
-                        <th>count</th>
-                        <th>avg_rating</th>
-                        <th>summary</th>
-                    </tr>
+                    <tr><th>name</th><th>count</th><th>avg_rating</th><th>summary</th></tr>
                 </thead>
                 <tbody></tbody>
             </table>
-        </div>
-        <p class="caption" id="themes-caption"></p>
+            <p style="font-size: 0.9rem; color: #666;" id="themes-note"></p>
+        </section>
         
         <div class="warning" id="fee-warning"></div>
         
-        <h2>Three quotes from the reviews</h2>
-        <div class="quotes" id="quotes"></div>
+        <section class="section">
+            <h2>Three quotes from the reviews</h2>
+            <div class="quotes" id="quotes"></div>
+        </section>
         
-        <h2>Weekly product pulse</h2>
-        <div class="pulse" id="pulse"></div>
+        <section class="section">
+            <h2>Weekly product pulse</h2>
+            <div class="pulse-text" id="pulse"></div>
+        </section>
         
-        <h2>Fee explainer for support</h2>
-        <p class="caption" id="fee-checked">Last checked: <span id="last-checked"></span></p>
-        <div class="fee-explainer" id="fee-explainer"></div>
-        <div class="fee-links" id="fee-links"></div>
+        <section class="section">
+            <h2>Fee explainer for support</h2>
+            <p class="last-checked">Last checked: <span id="last-checked"></span></p>
+            <ul class="fee-list" id="fee-list"></ul>
+            <div class="sources">
+                <a href="https://groww.in/pricing/">groww.in/pricing/</a> · 
+                <a href="https://groww.in/help/stocks,-f&o,-ipo-&-mtf/sx-demat-account/how-much-does-groww-charge-for-stocks-1">How much does Groww charge for stocks?</a>
+            </div>
+        </section>
         
-        <h2>Logged & Shared via MCP (with approval gating)</h2>
-        <div class="mcp-status" id="mcp-status"></div>
+        <section class="mcp-section">
+            <h2 style="margin-top: 0;">Logged & Shared via MCP (with approval gating)</h2>
+            <div id="mcp-items"></div>
+        </section>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         fetch('data.json')
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                // Caption
-                document.getElementById('caption').textContent = 
+                document.getElementById('subtitle').textContent = 
                     `Google Play reviews for com.nextbillion.groww, week ending 2026-10-16. Source: https://play.google.com/store/apps/details?id=com.nextbillion.groww`;
                 
-                // Metrics
-                const metrics = document.getElementById('metrics');
-                metrics.innerHTML = `
-                    <div class="metric">
-                        <div class="metric-label">Reviews</div>
-                        <div class="metric-value">${data.run_meta.quality.rows}</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Rated 4 or 5 stars</div>
-                        <div class="metric-value">${Math.round((data.run_meta.quality.rating_mix[4] + data.run_meta.quality.rating_mix[5]) / data.run_meta.quality.rows * 100)}%</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Reviews naming brokerage</div>
-                        <div class="metric-value">${data.insights.fee_confusion.evidence_ids.length}</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">Weekly note</div>
-                        <div class="metric-value">${data.pulse.split(/\s+/).length} words</div>
-                    </div>
+                const total = data.run_meta.quality.rows;
+                const pos = data.run_meta.quality.rating_mix[4] + data.run_meta.quality.rating_mix[5];
+                document.getElementById('metrics').innerHTML = `
+                    <div class="metric"><div class="metric-label">Reviews</div><div class="metric-value">${total.toLocaleString()}</div></div>
+                    <div class="metric"><div class="metric-label">Rated 4 or 5 stars</div><div class="metric-value">${Math.round(pos/total*100)}%</div></div>
+                    <div class="metric"><div class="metric-label">Reviews naming brokerage</div><div class="metric-value">${data.insights.fee_confusion.evidence_ids.length}</div></div>
+                    <div class="metric"><div class="metric-label">Weekly note</div><div class="metric-value">${data.pulse.split(/\s+/).filter(x=>x).length} words</div></div>
                 `;
                 
-                // Themes table
                 const tbody = document.querySelector('#themes-table tbody');
-                data.themes.slice(0, 5).forEach(theme => {
-                    const row = tbody.insertRow();
-                    row.insertCell(0).textContent = theme.name;
-                    row.insertCell(1).textContent = theme.count;
-                    row.insertCell(2).textContent = theme.avg_rating.toFixed(2);
-                    row.insertCell(3).textContent = theme.summary;
+                data.themes.slice(0,5).forEach(t => {
+                    const tr = tbody.insertRow();
+                    tr.insertCell(0).textContent = t.name;
+                    tr.insertCell(1).textContent = t.count;
+                    tr.insertCell(2).textContent = t.avg_rating.toFixed(2);
+                    tr.insertCell(3).textContent = t.summary;
                 });
+                document.getElementById('themes-note').textContent = 
+                    `Top three by volume: ${data.themes.slice(0,3).map(t=>t.name).join(', ')}. Other complaints are low-star reviews that do not name charges, support, or reliability.`;
                 
-                document.getElementById('themes-caption').textContent = 
-                    `Top three by volume: ${data.themes.slice(0, 3).map(t => t.name).join(', ')}. Other complaints are low-star reviews that do not name charges, support, or reliability.`;
+                document.getElementById('fee-warning').innerHTML = 
+                    `<strong>Misunderstood fee: Brokerage charges.</strong> Users confuse total charges (including DP/stamp duty/GST/exchange fees) with Groww's ₹20 brokerage fee; in fact mutual fund investments have no brokerage.`;
                 
-                // Fee warning
-                if (data.insights.fee_confusion.detected) {
-                    document.getElementById('fee-warning').innerHTML = 
-                        `<strong>Misunderstood fee: Brokerage charges.</strong> Users confuse total charges (including DP/stamp duty/GST/exchange fees) with Groww's ₹20 brokerage fee; in fact mutual fund investments have no brokerage.`;
-                }
-                
-                // Quotes
                 const quotesDiv = document.getElementById('quotes');
-                data.insights.quotes.slice(0, 3).forEach(quote => {
-                    quotesDiv.innerHTML += `
-                        <div class="quote-card">
-                            <div class="quote-theme">${quote.theme}</div>
-                            <div class="quote-text">"${quote.text}"</div>
-                            <div class="quote-meta">${quote.review_id} · ${quote.date} · ${quote.rating} star</div>
-                        </div>
-                    `;
+                data.insights.quotes.slice(0,3).forEach(q => {
+                    quotesDiv.innerHTML += `<div class="quote"><div class="quote-theme">${q.theme}</div><div class="quote-text">"${q.text}"</div><div class="quote-meta">${q.review_id} · ${q.date} · ${q.rating} star</div></div>`;
                 });
                 
-                // Pulse
                 document.getElementById('pulse').textContent = data.pulse;
                 
-                // Fee explainer
-                const feeDiv = document.getElementById('fee-explainer');
-                feeDiv.innerHTML = '<ul>' + data.fee_explainer.split('\n')
-                    .filter(l => l.trim().startsWith('-'))
-                    .map(l => '<li>' + l.substring(1).trim() + '</li>')
-                    .join('') + '</ul>';
+                const feeList = document.getElementById('fee-list');
+                data.fee_explainer.split('\n').filter(l=>l.trim().startsWith('-')).forEach(l => {
+                    const li = document.createElement('li');
+                    li.textContent = l.substring(1).trim();
+                    feeList.appendChild(li);
+                });
+                const m = data.fee_explainer.match(/Last checked: (.+)/);
+                if (m) document.getElementById('last-checked').textContent = m[1];
                 
-                // Last checked
-                const match = data.fee_explainer.match(/Last checked: (.+)/);
-                if (match) document.getElementById('last-checked').textContent = match[1];
-                
-                // Fee links
-                document.getElementById('fee-links').innerHTML = 
-                    '<a href="https://groww.in/pricing">groww.in/pricing</a> · <a href="https://groww.in/help">How much does Groww charge for stocks?</a>';
-                
-                // MCP status
-                const mcpDiv = document.getElementById('mcp-status');
-                mcpDiv.innerHTML = `
-                    <div class="mcp-item">
-                        <span class="mcp-label">append_to_note</span> (Google Doc) → 
-                        <a href="https://docs.google.com/document/d/10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k/edit" target="_blank">View Document</a>
-                    </div>
-                    <div class="mcp-item">
-                        <span class="mcp-label">create_email_draft</span> (Gmail Draft) → 
-                        <a href="https://mail.google.com/mail/u/0/#drafts/" target="_blank">View Drafts</a>
-                    </div>
-                    <p style="margin-top: 1rem; color: #155724;"><strong>Approval:</strong> ${data.approval.state} by ${data.approval.reviewer} at ${data.approval.decided_at}</p>
-                `;
-            })
-            .catch(err => {
-                document.body.innerHTML = '<p style="padding: 2rem;">Error loading data: ' + err + '</p>';
+                const mcpDiv = document.getElementById('mcp-items');
+                if (data.publish_log) {
+                    data.publish_log.forEach(p => {
+                        mcpDiv.innerHTML += `<div class="mcp-item"><strong>${p.outcome === 'append_note' ? 'append_to_note' : p.tool}</strong> (${p.outcome === 'append_note' ? 'Google Doc' : 'Gmail Draft'}) → <a href="${p.destination}" target="_blank">${p.destination}</a> <span style="color:#666;">(${p.published_at})</span></div>`;
+                    });
+                }
+                mcpDiv.innerHTML += `<p style="margin-top:0.75rem; color:#155724;"><strong>Approval:</strong> ${data.approval.state} by ${data.approval.reviewer} at ${data.approval.decided_at}</p>`;
             });
     </script>
 </body>
