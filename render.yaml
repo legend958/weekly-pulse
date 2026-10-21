@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: weekly-pulse
+    runtime: python
+    plan: free
+    # Rebuild the run artifacts ("the vector DB equivalent") and the dashboard
+    # payload on every deploy, then serve public/ as a static site.
+    buildCommand: python run_pipeline.py --offline && python generate_dashboard_data.py
+    startCommand: python -m http.server $PORT --bind 0.0.0.0 -d public
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: PYTHONIOENCODING
+        value: utf-8

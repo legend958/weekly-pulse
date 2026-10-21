@@ -37,6 +37,7 @@
         .last-checked { font-size: 0.9rem; color: #666; margin: 0.75rem 0; }
         .mcp-section { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 2.5rem; border: 1px solid #dee2e6; }
         .mcp-icons { display: flex; gap: 1rem; margin: 1rem 0; align-items: center; }
+        .mcp-icons a { display: inline-flex; line-height: 0; }
         .mcp-icon { width: 40px; height: 40px; cursor: pointer; transition: transform 0.2s; }
         .mcp-icon:hover { transform: scale(1.1); }
         .approval-badge { display: inline-block; padding: 0.25rem 0.75rem; background: #28a745; color: white; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
@@ -91,6 +92,7 @@
             <div style="margin-top: 1rem;">
                 <span class="approval-badge" id="approval-badge"></span>
             </div>
+            <p id="published-note" style="font-size: 0.85rem; color: #666; margin-top: 0.75rem;"></p>
         </section>
     </div>
     
@@ -99,10 +101,11 @@
             .then(r => r.json())
             .then(data => {
                 document.getElementById('subtitle').textContent = 
-                    `Google Play reviews for com.nextbillion.groww, week ending 2026-10-16. Source: https://play.google.com/store/apps/details?id=com.nextbillion.groww`;
+                    `Google Play reviews for com.nextbillion.groww, week ending ${data.run_meta.quality.date_max}. Source: https://play.google.com/store/apps/details?id=com.nextbillion.groww`;
                 
                 const total = data.run_meta.quality.rows;
-                const pos = data.run_meta.quality.rating_mix[4] + data.run_meta.quality.rating_mix[5];
+                const mix = data.run_meta.quality.rating_mix;
+                const pos = (mix['4'] || 0) + (mix['5'] || 0);
                 document.getElementById('metrics').innerHTML = `
                     <div class="metric"><div class="metric-label">Reviews</div><div class="metric-value">${total.toLocaleString()}</div></div>
                     <div class="metric"><div class="metric-label">Rated 4 or 5 stars</div><div class="metric-value">${Math.round(pos/total*100)}%</div></div>
@@ -141,16 +144,52 @@
                 if (m) document.getElementById('last-checked').textContent = m[1];
                 
                 const mcpIcons = document.getElementById('mcp-icons');
-                if (data.publish_log) {
+                mcpIcons.innerHTML = '';
+                if (data.publish_log && data.publish_log.length) {
                     data.publish_log.forEach(p => {
-                        if (p.outcome === 'append_note') {
-                            mcpIcons.innerHTML += `<a href="${p.destination}" target="_blank" title="Google Docs"><img src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png" class="mcp-icon" alt="Google Docs"></a>`;
-                        } else if (p.outcome === 'create_email_draft') {
-                            mcpIcons.innerHTML += `<a href="${p.destination}" target="_blank" title="Gmail Draft"><img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico" class="mcp-icon" alt="Gmail"></a>`;
+                        let svg = '', title = '';
+                        if (p.outcome === 'append_note' || (p.destination || '').includes('docs.google.com')) {
+                            title = 'Google Docs';
+                            svg = '<svg class="mcp-icon" viewBox="0 0 48 48" role="img" aria-label="Google Docs">' +
+                                  '<path fill="#FFC107" d="M9 4h20l10 10v30a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>' +
+                                  '<path fill="#4285F4" d="M29 4l10 10H31a2 2 0 0 1-2-2V4z"/>' +
+                                  '<path fill="#fff" d="M15 26h18v3H15zm0 6h18v3H15zm0-12h18v3H15z"/></svg>';
+                        } else if (p.outcome === 'create_email_draft' || (p.destination || '').includes('mail.google.com')) {
+                            title = 'Gmail Draft';
+                            svg = '<svg class="mcp-icon" viewBox="0 0 48 48" role="img" aria-label="Gmail">' +
+                                  '<path fill="#EA4335" d="M6 12a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v24a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V12z"/>' +
+                                  '<path fill="#fff" d="M6 14l18 13 18-13v4L24 31 6 18v-4z"/></svg>';
                         }
+                        if (!svg) return;
+                        const a = document.createElement('a');
+                        a.href = p.destination;
+                        a.target = '_blank';
+                        a.rel = 'noopener';
+                        a.title = title;
+                        a.setAttribute('aria-label', title);
+                        a.innerHTML = svg;
+                        mcpIcons.appendChild(a);
                     });
+                } else {
+                    mcpIcons.innerHTML = '<span style="color:#666;font-size:0.9rem;">Not published yet — approve a run to publish via MCP.</span>';
                 }
-                document.getElementById('approval-badge').textContent = `✓ Approved by ${data.approval.reviewer} at ${data.approval.decided_at}`;
+                const badge = document.getElementById('approval-badge');
+                const approval = data.approval || {};
+                if (approval.reviewer && approval.reviewer !== 'none') {
+                    badge.textContent = `✓ Approved by ${approval.reviewer} at ${approval.decided_at}`;
+                } else if (data.published) {
+                    badge.textContent = `✓ Published via MCP${approval.decided_at ? ' at ' + approval.decided_at : ''}`;
+                } else {
+                    badge.textContent = 'Not approved yet';
+                    badge.style.background = '#6c757d';
+                }
+
+                const note = document.getElementById('published-note');
+                if (data.published) {
+                    note.textContent = data.published_run_id
+                        ? `MCP destinations are from the last published run (${data.published_run_id}).`
+                        : `MCP destinations published from run ${data.run_id}.`;
+                }
             });
     </script>
 </body>

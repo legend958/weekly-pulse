@@ -1357,17 +1357,18 @@
       "tool": "append_to_note",
       "artifact": "pulse",
       "destination": "https://docs.google.com/document/d/10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k/edit",
-      "published_at": "2026-10-18T06:26:53+00:00",
+      "published_at": "2026-10-18T06:29:31+00:00",
       "outcome": "append_note",
       "detail": "[{\"documentId\":\"10wnp8Qe3bn5x2JGy1N0kQV7t_7NYJTXxDrHTCzbXk2k\"}]"
     },
     {
       "tool": "create_email_draft",
       "artifact": "fee_explainer",
-      "destination": "https://mail.google.com/mail/u/0/#drafts/1a14db26d07bc736",
-      "published_at": "2026-10-18T06:26:53+00:00",
+      "destination": "https://mail.google.com/mail/u/0/#drafts/1a14db4d10225215",
+      "published_at": "2026-10-18T06:29:31+00:00",
       "outcome": "create_email_draft",
-      "detail": "[{\"id\":\"r7878469913369081908\",\"message\":{\"id\":\"1a14db26d07bc736\",\"threadId\":\"1a14db26d07bc736\",\"labelIds\":[\"DRAFT\"]}}]"
+      "detail": "[{\"id\":\"r-4955743729232012346\",\"message\":{\"id\":\"1a14db4d10225215\",\"threadId\":\"1a14db4d10225215\",\"labelIds\":[\"DRAFT\"]}}]"
     }
-  ]
+  ],
+  "published": true
 }
